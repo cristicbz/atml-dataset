@@ -12,10 +12,10 @@ neutral = {'the', 'a', 'did', 'had', 'ball', 'match', 'goal', 'crowd', ...
            'people', 'game', 'score', 'unbeliveable', 'doesnt', 'may', ...
            'might', 'not', 'possibly', 'quite', 'drive'};
 
-sentiments = betarnd(0.8, 0.8, [n_points, 1]);
+sentiments = betarnd(0.8, 0.8, [n_points, 1]) * 2 - 1;
 posts = {};
 for i_point = 1:n_points
-  sentiment = sentiments(i_point);
+  sentiment = (sentiments(i_point) + 1) * .5;
   n_neutral_words = geornd(0.2) + 6;
   n_sentiment_words = geornd(0.08) + 2;
   post = [];
