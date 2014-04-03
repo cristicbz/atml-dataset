@@ -5,8 +5,8 @@ weights = {};
 n_posts = length(posts);
 for i_post = 1:n_posts
   [words, weights] = PostFeatureSpace(...
-      posts{i_post}, alpha(i_post), words, weights)
+      posts{i_post}, alpha(i_post), words, weights);
 end
 
-[weights perm] = sort(weights, 'descend')
+[weights perm] = sort(weights, 'descend');
 words = words(perm);
