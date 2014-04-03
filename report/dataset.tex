@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{empheq}
 \usepackage[margin=2.2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -15,10 +16,78 @@
 \begin{document}
 \title{Advanced Topics in Machine Learning\\Dataset for Kernel CCA}
 \author{\bf{Cristian Cobzarenco}; \bf{Marius Cobzarenco} \\
-  cristi.cobzarenco.13@ucl.ac.uk; marius.cobzarenco.10@ucl.ac.uk}
+  cristian.cobzarenco.13@ucl.ac.uk; marius.cobzarenco.10@ucl.ac.uk}
 \maketitle
 
 \section*{Dataset Design for Kernel CCA}
+We designed a dataset which simulates a sentiment analysis type of
+problem. The input space $X$ contains text documents where each
+document is encoded as a list of words (a cell array of strings in
+Octave). The space $Y$ are real numbers in $[-1, 1]$ denoting the
+overall sentiment of the corresponding document (with $-1 \equiv$
+perfectly negative and $1\equiv$ perfectly positive). We generated 300
+pairs $(x_i, y_i)$ i.i.d. by sampling the following prior over $X$ and
+$Y$:
+\begin{align}
+y_i&=2\tilde{y}_i - 1
+& \tilde{y}_i &\sim \text{Beta}\left (\alpha, \beta\right)
+& \alpha=\beta&=0.8  \\
+n_{n}&=\tilde{n}_{n} + 6
+&\tilde{n}_{n}&\sim \text{Geometric}(0.2)
+& \langle \tilde{n}_{n} \rangle &= 5\\
+n_{s}&=\tilde{n}_{s} + 2
+& \tilde{n}_{s}&\sim \text{Geometric}(0.08)
+& \langle \tilde{n}_{s} \rangle &= 12.5
+\end{align}
+$y_i$ is the latent \emph{sentiment} of the document $x_i$ and it is
+defined as a linear map of a random beta variable $\tilde{y}$ to
+$[-1, 1]$. A document contains $n_n$ neutral words and $n_s$ sentiment
+words. The neutral words are drawn uniformly from a set $\mathcal{W}$,
+whereas the sentiment words are mixture of
+positive and negative words drawn from the corresponding set
+$\mathcal{P}$ and $\mathcal{N}$ respectively:
+\begin{align}
+x_{ij} \sim \text{Uniform}(\mathcal{W}), \quad\quad \text{for } j = 1..n_{n}
+\end{align}
+\begin{empheq}[left=\empheqlbrace]{align}
+u_j &\sim \text{Uniform}(0, 1), \quad\quad \text{for } j = n_{n}+1..n_{s}\\
+x_{ij}\vert u_j<\tilde{y}_i &\sim \text{Uniform}(\mathcal{P}) \\
+x_{ij}\vert u_j\geq\tilde{y}_i &\sim \text{Uniform}(\mathcal{N})
+\end{empheq}
+\newline
+The code computes a random permutation of $x_i$ as defined above. The
+set of positive words $\mathcal{P}$ is
+\begin{quote}
+good, excellent, ludicrous, exceptional, exquisite,
+improvement, terrific, delirious, divine, great,
+brilliant, excellent, novel
+\end{quote}
+The set of negative words $\mathcal{N}$ is
+\begin{quote}
+dismal, desolate, terrible, horrible, miserable,
+bad, worst, stupid, dumb, ineffectual, ugly,
+disappointing
+\end{quote}
+Lastly, $\mathcal{S}$, the neutral words are
+\begin{quote}
+the, a, did, had, ball, match, goal, crowd,
+people, game, score, unbeliveable, doesnt, may,
+might, not, possibly, quite, drive
+\end{quote}
+Sampling the prior described, below is an example of a very positive
+document with associated sentiment $y=0.95$:
+\begin{quote}
+good drive dismal score drive the might excellent had excellent people
+doesnt novel terrific the divine ball excellent drive novel
+\end{quote}
+And a somewhat negative one with $y=-0.52$:
+\begin{quote}
+worst ineffectual unbelievable ball quite game may possibly match
+quite possibly did goal
+\end{quote}
+As the reader may have noticed, no effort was made to model
+grammatical structure essentially forcing a bag-of-words language
+model on the kernel.
 
 
 \newpage
